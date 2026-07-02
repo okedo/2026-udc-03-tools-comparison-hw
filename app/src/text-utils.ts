@@ -1,4 +1,4 @@
-// Tiny text helpers shared across the WS3 tool-comparison exercise.
+﻿// Tiny text helpers shared across the WS3 tool-comparison exercise.
 
 export function slugify(input: string): string {
   return input
@@ -27,4 +27,15 @@ export function parseTags(input: string): string[] {
     .filter((tag) => tag.length > 0);
 
   return Array.from(new Set(tags));
+}
+
+// Capitalize first letter of each non-whitespace word, lowercase the rest.
+// Preserves all whitespace (including multiple spaces and leading/trailing spaces).
+export function capitalizeWords(input: string): string {
+  if (input.length === 0) return input;
+  // Replace each sequence of non-whitespace characters with a title-cased version.
+  return input.replace(/\S+/g, (word) => {
+    if (word.length === 0) return word;
+    return word[0].toUpperCase() + word.slice(1).toLowerCase();
+  });
 }
