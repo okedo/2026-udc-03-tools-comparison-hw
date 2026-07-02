@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { parseTags, slugify, truncate } from "./text-utils.js";
+﻿import { describe, expect, it } from "vitest";
+import { parseTags, slugify, truncate, capitalizeWords } from "./text-utils.js";
 
 describe("slugify", () => {
   it("lowercases and hyphenates a plain title", () => {
@@ -30,5 +30,43 @@ describe("truncate", () => {
     const result = truncate("hello world", 5);
     expect(result.length).toBeLessThan("hello world".length);
     expect(result.endsWith("...")).toBe(true);
+  });
+
+  it("respects maxLength limit including suffix (regression for BUG-101)", () => {
+    const result = truncate("a long sentence here", 10, "...");
+    expect(result).toBe("a long ...");
+    expect(result.length).toBe(10);
+  });
+
+  it("handles edge case where suffix is longer than or equal to maxLength", () => {
+    const result = truncate("hello world", 3, "...");
+    expect(result.length).toBeLessThanOrEqual(3);
+    expect(result).toBe("...");
+  });
+});
+
+describe("capitalizeWords", () => {
+  it("capitalizes each word and lowercases the rest", () => {
+    expect(capitalizeWords("WIRELESS mouse")).toBe("Wireless Mouse");
+  });
+
+  it("preserves multiple spaces between words", () => {
+    expect(capitalizeWords("red   t-shirt")).toBe("Red   T-shirt");
+  });
+
+  it("preserves leading and trailing spaces", () => {
+    expect(capitalizeWords("  hello world  ")).toBe("  Hello World  ");
+  });
+
+  it("returns empty string unchanged", () => {
+    expect(capitalizeWords("")).toBe("");
+  });
+
+  it("returns spaces-only string unchanged", () => {
+    expect(capitalizeWords("   ")).toBe("   ");
+  });
+
+  it("handles already title case input", () => {
+    expect(capitalizeWords("already Title Case")).toBe("Already Title Case");
   });
 });
